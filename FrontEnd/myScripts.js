@@ -1,72 +1,57 @@
-// Sélection des éléments HTML
-const projetsNode = document.querySelector('#projets');
-const tousButton = document.querySelector('#tri-tous');
-const objetButton = document.querySelector('#tri-objet');
-const appartementButton = document.querySelector('#tri-appartement');
-const hotelButton = document.querySelector('#tri-hôtel');
+const triTous = document.getElementById("tri-tous");
+const triObjet = document.getElementById("tri-objet");
+const triAppartement = document.getElementById("tri-appartement");
+const triHotel = document.getElementById("tri-hotel");
 
-// Récupération des données depuis l'API
-fetch('http://localhost:5678/api/categories')
-  .then(response => response.json())
-  .then(data => {
-    console.log(data);
 
-    // Fonction pour trier les éléments en fonction de l'identifiant du bouton de tri sélectionné
-    const trierParCategorie = categorie => {
-      let categoriesHTML = '';
+// Récupérer l'élément HTML de la liste de projets
+const projetsListe = document.getElementById("projets-liste");
 
-      // Filtrage des éléments en fonction de la catégorie sélectionnée
-      const filteredData = categorie === 'tous' ? data : data.filter(({ name }) => name.toLowerCase().includes(categorie));
+// Récupérer les données des catégories et des travaux depuis l'API
+const categoriesPromise = fetch('http://localhost:5678/api/categories').then(response => response.json());
+const worksPromise = fetch('http://localhost:5678/api/works').then(response => response.json());
 
-      // Tri des éléments en fonction de leur name
-      filteredData.sort((a, b) => a.name.localeCompare(b.name));
+// Définir une fonction pour trier les travaux par catégorie
+async function trierParCategorie(categorie) {
+  // Attendre les données des catégories et des travaux depuis l'API
+  const [categories, works] = await Promise.all([categoriesPromise, worksPromise]);
+console.log(categories);
+  // Récupérer la catégorie sélectionnée
+  const categorieSelectionnee = categories.find(cat => cat.name === categorie);
 
-      // Génération du contenu HTML trié
-      for (const { name } of filteredData) {
-        categoriesHTML += `
-          <div class="category">
-            <p>${name}</p>
-          </div>
-        `;
-      }
+  // Filtrer les travaux selon la catégorie sélectionnée
+  const projetsFiltres = categorieSelectionnee
+    ? works.filter(travail => travail.categoryId === categorieSelectionnee.id)
+    : works;
 
-      // Mise à jour du contenu HTML affiché
-      projetsNode.innerHTML = categoriesHTML;
-    };
+  // Mettre à jour la liste de projets HTML avec les travaux filtrés
+  const projetsNode = document.querySelector('#projets-photos');
+  projetsNode.innerHTML = projetsFiltres.map(travail => `
+    <div class="work">
+      <img src="${travail.imageUrl}" alt="${travail.title}">
+      <p>${travail.title}</p>
+    </div>
+  `).join('');
+}
 
-    // Écouteurs d'événements pour les boutons de tri
-    tousButton.addEventListener('click', () => trierParCategorie('tous'));
-    objetButton.addEventListener('click', () => trierParCategorie('objet'));
-    appartementButton.addEventListener('click', () => trierParCategorie('appartement'));
-    hotelButton.addEventListener('click', () => trierParCategorie('hôtel'));
-  })
-  .catch(error => console.error(error));
+// Afficher tous les travaux au chargement de la page
+window.addEventListener("load", async () => {
+  const works = await worksPromise;
+  const projetsNode = document.querySelector('#projets-photos');
+  projetsNode.innerHTML = works.map(travail => `
+    <div class="work">
+      <img src="${travail.imageUrl}" alt="${travail.title}">
+      <p>${travail.title}</p>
+    </div>
+  `).join('');
+});
 
-/** RECUPERATION DES IMAGES **/
+// Vérifier si les boutons de tri existent avant d'ajouter les événements de clic
+if (triTous && triObjet && triAppartement && triHotel) {
+  triTous.addEventListener("click", () => trierParCategorie("Tous"));
+  triObjet.addEventListener("click", () => trierParCategorie("Objets"));
+  triAppartement.addEventListener("click", () => trierParCategorie("Appartements"));
+  triHotel.addEventListener("click", () => trierParCategorie("Hotels & restaurants"));
+}
 
-fetch('http://localhost:5678/api/works')
-  .then(response => {
-    return response.json();
-  })
-  .then(data => {
-    console.log('en cours');
-    console.log(data);
 
-    const projetsNode = document.querySelector('#projets');
-
-    for (let i = 0; i < data.length; i++) {
-      const currentTitle = data[i].title;
-      const currentImageUrl = data[i].imageUrl;
-      projetsNode.innerHTML += `
-        <div class="work">
-          <img src="${currentImageUrl}" alt="${currentTitle}" style="width: calc(100% / 3 - 20px);">
-          <p>${currentTitle}</p>
-        </div>`;
-      //}
-    }
-  })
-  .catch(error => {
-    console.error('Une erreur s\'est produite lors de la récupération des travaux :', error);
-  });
-
- 

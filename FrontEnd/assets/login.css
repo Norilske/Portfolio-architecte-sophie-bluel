@@ -1,0 +1,97 @@
+:root {
+	--color-primary:#1D6154;
+    --color-secondary:3D3D3D;
+    --color-tertiary:white;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/** MAIN **/
+
+.Login {
+    height: 36px;
+    font-family: 'Syne';
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 36px;    
+    color: var(--color-primary);
+    margin-bottom: 35px;
+}
+
+.Login-box label {
+    color: var(--color-secondary);
+}
+
+form input {
+    width: 379px;
+    height: 51px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+    border: none;
+    outline: none;
+}
+
+.mdp {
+margin-top: 50px;
+}
+
+form label {
+    display: flex;
+  }
+  
+
+.perdu {
+    margin-top: 28px;
+}
+
+.perdu  a {
+    color: var(--color-secondary);
+    font-family: 'Work Sans';
+    font-style: normal;
+}
+
+#tri-tous {
+	color: white;
+    cursor: pointer;
+	border: 1px solid var(--color-primary);
+    background: var(--color-primary);
+
+	border-radius: 60px;
+	height: 37px;
+
+	font-family: 'Syne';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 17px;
+
+    margin-top: 37px;
+    padding: 9px 20px;
+}
+
+
+/** FOOTER **/ 
+
+.mentions {
+background-color: #FFFFFF;
+width: 100%;
+margin-top: 200px;
+}
+
+.mentions a {
+    
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 300;
+font-size: 14px;
+line-height: 16px;
+color: #000000;
+margin-left: 100%;
+margin-top: 100%;
+background-color: white;
+}
